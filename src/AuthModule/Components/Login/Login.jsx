@@ -10,7 +10,7 @@ export default function Login({saveAdminData}) {
   const navigate =useNavigate();
   let {register,handleSubmit,formState:{errors}} =useForm();
   function onSubmit(data) {
-    axios.post(`http://upskilling-egypt.com:3002/api/v1/Users/Login`,data)
+    axios.post(`https://upskilling-egypt.com:3002/api/v1/Users/Login`,data)
     .then(result=>{
       toast("success");
       localStorage.setItem("adminTkn",result.data.token)

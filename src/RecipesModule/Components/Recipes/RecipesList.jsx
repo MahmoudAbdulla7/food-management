@@ -13,7 +13,7 @@ export default function RecipesList() {
   function getRecipesList() {
     axios
       .get(
-        `http://upskilling-egypt.com:3002/api/v1/Recipe/?pageSize=5&pageNumber=1`,
+        `https://upskilling-egypt.com:443/api/v1/Recipe/?pageSize=5&pageNumber=1`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("adminTkn")}`,
@@ -48,7 +48,7 @@ export default function RecipesList() {
   const handleShow = () => setShow(true);
   function getTags() {
     axios
-      .get(`http://upskilling-egypt.com:3002/api/v1/tag/`, {
+      .get(`https://upskilling-egypt.com:443/api/v1/tag/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("adminTkn")}`,
         },
@@ -62,7 +62,7 @@ export default function RecipesList() {
   }
   function getCategoryList() {
     axios
-      .get(`http://upskilling-egypt.com:3002/api/v1/Category/?pageSize=100&pageNumber=1`, {
+      .get(`https://upskilling-egypt.com:443/api/v1/Category/?pageSize=100&pageNumber=1`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("adminTkn")}`,
         },
@@ -97,7 +97,7 @@ export default function RecipesList() {
       return formData.append(key, value[0]);
     });
 
-    axios.post(`http://upskilling-egypt.com:3002/api/v1/Recipe/`,formData, {
+    axios.post(`https://upskilling-egypt.com:443/api/v1/Recipe/`,formData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("adminTkn")}`,
         'Content-Type': 'multipart/form-data'
@@ -121,7 +121,7 @@ export default function RecipesList() {
   }
   function deleteRecipe() {
     axios
-      .delete(`http://upskilling-egypt.com:3002/api/v1/Recipe/${itemId}`, {
+      .delete(`https://upskilling-egypt.com:443/api/v1/Recipe/${itemId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("adminTkn")}`,
         },
@@ -189,7 +189,7 @@ export default function RecipesList() {
                 <td className="w-25 text-center">
                   <img
                     className="w-25"
-                    src={`http://upskilling-egypt.com:3002/${recipe.imagePath}`}
+                    src={`https://upskilling-egypt.com:443/${recipe.imagePath}`}
                     alt=""
                   />
                 </td>

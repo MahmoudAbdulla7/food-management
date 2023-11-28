@@ -11,7 +11,7 @@ export default function CategoriesList() {
   function getCategoryList() {
     axios
     .get(
-      `http://upskilling-egypt.com:3002/api/v1/Category/?pageSize=6&pageNumber=1`,
+      `https://upskilling-egypt.com:443/Category/?pageSize=6&pageNumber=1`,
       {
         headers: {
           Authorization: `Barear ${localStorage.getItem("adminTkn")}`,
@@ -36,7 +36,7 @@ export default function CategoriesList() {
   const handleShow = () => setShow(true);
   let {register ,handleSubmit ,formState:{errors} ,setValue}=useForm();
   function addNewCategory(data) {
-    axios.post(`http://upskilling-egypt.com:3002/api/v1/Category/`,data,{headers:{
+    axios.post(`https://upskilling-egypt.com:443/Category/`,data,{headers:{
       Authorization:`Bearer ${localStorage.getItem("adminTkn")}`
     }})
     .then(result=>{
@@ -49,7 +49,7 @@ export default function CategoriesList() {
     })
   }
   function deleteCategory() {
-    axios.delete(`http://upskilling-egypt.com:3002/api/v1/Category/${itemId}`,{headers:{Authorization:`Bearer ${localStorage.getItem("adminTkn")}`}})
+    axios.delete(`https://upskilling-egypt.com:443/Category/${itemId}`,{headers:{Authorization:`Bearer ${localStorage.getItem("adminTkn")}`}})
     .then(result=>{
       handleClose();
       getCategoryList();
@@ -71,7 +71,7 @@ export default function CategoriesList() {
     setModelState("Update")
   }
   function updateCategory(data) {
-    axios.put(`http://upskilling-egypt.com:3002/api/v1/Category/${itemId}`,data,{headers:{
+    axios.put(`https://upskilling-egypt.com:443/Category/${itemId}`,data,{headers:{
       Authorization:`Bearer ${localStorage.getItem("adminTkn")}`
     }})
     .then(result=>{

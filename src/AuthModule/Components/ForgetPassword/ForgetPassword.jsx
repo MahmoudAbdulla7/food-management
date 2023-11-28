@@ -10,7 +10,7 @@ export default function ForgetPassword() {
   const navigate =useNavigate();
   let {register,handleSubmit,formState:{errors}} =useForm();
   function onSubmit(data) {
-    axios.post(`http://upskilling-egypt.com:3002/api/v1/Users/Reset/Request`,data)
+    axios.post(`https://upskilling-egypt.com:443/api/v1/Users/Reset/Request`,data)
     .then(result=>{
       toast(result.data.message);
       navigate("/reset-password");

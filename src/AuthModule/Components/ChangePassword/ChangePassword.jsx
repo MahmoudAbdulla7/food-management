@@ -14,7 +14,7 @@ export default function ChangePassword({show,handleClose}) {
   }
   //api intgration
   function onSubmit(data) {
-    axios.put(`http://upskilling-egypt.com:3002/api/v1/Users/ChangePassword`,data,
+    axios.put(`https://upskilling-egypt.com:443/api/v1/Users/ChangePassword`,data,
     {headers:{Authorization:`Bearer ${localStorage.getItem(`adminTkn`)}`}})
     .then(result=>
       //toast && navigate

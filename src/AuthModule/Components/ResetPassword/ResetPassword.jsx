@@ -20,7 +20,7 @@ export default function ResetPassword({saveAdminData}) {
   password.current = watch('newPassword', '');
 
   function onSubmit(data) {
-    axios.post(`http://upskilling-egypt.com:3002/api/v1/Users/Reset`,data)
+    axios.post(`https://upskilling-egypt.com:443/api/v1/Users/Reset`,data)
     .then(result=>{
       toast("success");
       navigate("/login");
