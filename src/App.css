@@ -15,3 +15,13 @@
 .ps-menu-button:hover {
     background-color: rgba(0, 148, 71,0.4)!important;
 }
+.header-content{
+    background-image: url('./assets/header-bg-svg.svg');
+    background-repeat: no-repeat;
+    background-size: 105%;
+    background-position: center center;
+
+}
+.home-content{
+    background-color:rgba(240, 255, 239, 1);
+}

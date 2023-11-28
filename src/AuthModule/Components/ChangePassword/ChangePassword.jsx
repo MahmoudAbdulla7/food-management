@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import { useForm } from 'react-hook-form';
 import logo from '../../../assets/1.png';
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 export default function ChangePassword({show,handleClose}) {
   let {register,handleSubmit,formState:{errors}} =useForm();
@@ -28,7 +28,6 @@ export default function ChangePassword({show,handleClose}) {
 
   return (
     <>
-    <ToastContainer />
       <Modal className='p-5' show={show} onHide={handleClose}>
         <Modal.Header >
         <div>

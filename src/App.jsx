@@ -15,6 +15,7 @@ import AuthLayout from './SharedModule/Components/AuthLayout/AuthLayout'
 import { jwtDecode } from 'jwt-decode'
 import ProtectedRoute from './SharedModule/Components/ProtectedRoute/ProtectedRoute'
 import ResetPassword from './AuthModule/Components/ResetPassword/ResetPassword'
+import { ToastContainer } from 'react-toastify'
 
 
 function App() {
@@ -35,7 +36,7 @@ function App() {
   let router =createBrowserRouter([
     {
       path:'dashboard',element:(<ProtectedRoute adminData={adminData}><MasterLayout adminData={adminData}/></ProtectedRoute>),errorElement:<NotFound/>,children:[
-        {index:true,element:<Home/>},
+        {index:true,element:<Home adminData={adminData}/>},
         {path:'users',element:<UsersList/>},
         {path:'recipes',element:<RecipesList/>},
         {path:'categories',element:<CategoriesList/>}
@@ -55,6 +56,7 @@ function App() {
 
   return (
     <>
+      <ToastContainer />
       <RouterProvider router={router}/>
     </>
   )

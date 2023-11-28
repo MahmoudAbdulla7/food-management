@@ -16,7 +16,6 @@ export default function MasterLayout({adminData}) {
             <div className="col-md-10 p-0">
                 <div>
                     <Navbar adminData={adminData}/>
-                    <Header/>
                     <Outlet/>
                     
                 </div>

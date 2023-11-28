@@ -3,7 +3,7 @@ import logo from '../../../assets/1.png'
 import { useForm } from 'react-hook-form'
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function Login({saveAdminData}) {
@@ -24,7 +24,6 @@ export default function Login({saveAdminData}) {
     <div className='Auth-container container-fluid'>
       <div className="row bg-overLay vh-100 justify-content-center">
       <div>
-        <ToastContainer />
       </div>
         <div className="col-md-6 ">
           <div className='bg-light p-3 rounded-3'>
