@@ -1,20 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from '../../../assets/1.png';
 import { useForm ,Link,useNavigate,toast,callApi } from "../../../utls/index";
+import Loading from '../../../SharedModule/Components/Loading/Loading';
 
 export default function Login({saveAdminData}) {
   const navigate =useNavigate();
   let {register,handleSubmit,formState:{errors}} =useForm();
+  const [isLoading, setisLoading] = useState(false);
   function onSubmit(data) {
+    setisLoading(true)
     callApi({method:"post",path:"Users/Login",data})
     .then(result=>{
       toast("success");
       localStorage.setItem("adminTkn",result.data.token)
       saveAdminData();
+      setisLoading(false)
       navigate("/dashboard");
     })
     .catch(error=>{
-      return toast(error?.response.data.message)})
+      setisLoading(false)
+      return toast(error?.response.data.message|| "Failed")})
   }
   return (
     <div className='Auth-container container-fluid'>
@@ -43,7 +48,7 @@ export default function Login({saveAdminData}) {
               <Link className="text-decoration-none text-success" to="/forget-password"> Forget password?</Link>
               </div>
               <br />
-              <button className='btn btn-success w-100'>Login </button>
+              <button className='btn btn-success w-100'>{isLoading?<Loading/>: <span>Login</span>} </button>
 
             </form>
           </div>

@@ -3,16 +3,23 @@ import Header from "../../../SharedModule/Components/Header/Header";
 import noData from "../../../assets/no data.svg";
 import NoData from "../../../SharedModule/Components/NoData/NoData";
 import { useForm,toast,callApi,Modal } from "../../../utls/index";
+import Loading from "../../../SharedModule/Components/Loading/Loading";
 
 
 export default function RecipesList() {
   const [recipesList, setRecipesList] = useState([]);
+  const [isLoading, setisLoading] = useState(false)
+  const [handelLoadingOfModal, sethandelLoadingOfModal] = useState(false);
+  const [flag, setflag] = useState(false);
   function getRecipesList() {
+    setisLoading(true);
     callApi({ path: "Recipe/", pageNumber: "1", method: "get",logedIn:true })
       .then((result) => {
+        setisLoading(false)
         setRecipesList(result.data.data);
       })
       .catch((errors) => {
+        setisLoading(false)
         toast("Network Error");
       });
   }
@@ -45,11 +52,14 @@ export default function RecipesList() {
       });
   }
   function getCategoryList() {
+    setflag(true);
     callApi({ path: "Category/", pageSize:100,pageNumber: "1", method: "get",logedIn:true })
       .then((result) => {
+        setflag(false)
         setCategories(result.data.data);
       })
       .catch((errors) => {
+        setflag(false)
         toast("Network Error");
       });
   }
@@ -69,14 +79,16 @@ export default function RecipesList() {
     reset()
   }
   function addNewRecipe(data) {
+    sethandelLoadingOfModal(true)
     callApi({method:"post",path:"Recipe/",data,logedIn:true})
     .then((result) => {
+      sethandelLoadingOfModal(false)
       handleClose();
       getRecipesList();
       toast(result.data.message||"Created Successfully");
     })
     .catch((error) => {
-      console.log(error);
+      sethandelLoadingOfModal(false)
       toast("Faild");
       handleClose();
     });
@@ -92,14 +104,17 @@ export default function RecipesList() {
     setitemId(recipe.id);
   }
   function deleteRecipe(e) {
+    sethandelLoadingOfModal(true)
     e.preventDefault();
     callApi({method:"delete",path:`Recipe/${itemId}`,logedIn:true})
       .then((result) => {
+        sethandelLoadingOfModal(false)
         handleClose();
         getRecipesList();
         toast("Delete Successfully");
       })
       .catch((error) => {
+        sethandelLoadingOfModal(false)
         toast("Faild");
         handleClose();
       });
@@ -124,7 +139,11 @@ export default function RecipesList() {
             </div>
           </div>
         </div>
-        {recipesList?        <table className="table text-center">
+
+
+
+        {isLoading?<Loading/>:recipesList?       
+         <table className="table text-center">
           <thead>
             <tr>
               <th className="py-3 bg-body-secondary" scope="col">
@@ -206,7 +225,6 @@ export default function RecipesList() {
           ))}
         </table>:<NoData/>}
       </div>
-
       <Modal className="p-5" show={modalState == "Delete"} onHide={handleClose}>
         <form onSubmit={deleteRecipe} className="p-4 text-center">
           <img src={noData} alt="#" />
@@ -217,14 +235,14 @@ export default function RecipesList() {
           </span>
           <hr />
           <div className="text-end">
-            <button className="btn btn-danger px-4">Delete this item</button>
+            <button className="btn btn-danger px-4">{handelLoadingOfModal?<Loading/>:<span>Delete this item</span>}</button>
           </div>
         </form>
       </Modal>
       <Modal className="p-5" show={modalState == "Add"} onHide={handleClose}>
-        <h2 className="px-4 pt-5">Add new recipe</h2>
+          {flag?<div className="p-5"><Loading/></div>:<><h2 className="px-4 pt-5">Add new recipe</h2>
         <form onSubmit={handleSubmit(addNewRecipe)} className="pb-5 px-4 ">
-          <div className="Recipe-Name">
+        <div className="Recipe-Name">
             <input
               className="form-control"
               placeholder="Recipe Name"
@@ -291,9 +309,10 @@ export default function RecipesList() {
           </div>
 
           <div className="text-end my-2">
-            <button className="btn btn-success">Save</button>
+            <button className="btn btn-success">{handelLoadingOfModal?<Loading/>:<span>Save</span>}</button>
           </div>
-        </form>
+</form></>}
+
       </Modal>
     </>
   );

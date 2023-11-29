@@ -3,18 +3,24 @@ import Header from "../../../SharedModule/Components/Header/Header";
 import NoData from "../../../SharedModule/Components/NoData/NoData";
 import noData from "../../../assets/no data.svg";
 import { useForm,toast,callApi,Modal } from "../../../utls/index";
+import Loading from "../../../SharedModule/Components/Loading/Loading";
 
 
 
 export default function CategoriesList() {
   const [categoryList, setCategoryList] = useState([]);
+  const [isLoading, setisLoading] = useState(false)
+  const [handelLoadingOfModal, sethandelLoadingOfModal] = useState(false);
   function getCategoryList() {
+    setisLoading(true);
     callApi({ path: "Category/", pageNumber: "1", method: "get" ,logedIn:true})
       .then((result) => {
         setCategoryList(result?.data?.data);
+        setisLoading(false);
       })
       .catch((errors) => {
         toast(errors.message || "error");
+        setisLoading(false);
       });
   }
   useEffect(() => {
@@ -33,14 +39,18 @@ export default function CategoriesList() {
     formState: { errors },
     setValue,
   } = useForm();
+  //--- add
   function addNewCategory(data) {
+    sethandelLoadingOfModal(true)
     callApi({method:"post",path:"Category/",data,logedIn:true})
       .then((result) => {
+        sethandelLoadingOfModal(false)
         handleClose();
         getCategoryList();
         toast("Success");
       })
       .catch((error) => {
+        sethandelLoadingOfModal(false)
         toast(error.message || "faild");
       });
   }
@@ -48,7 +58,7 @@ export default function CategoriesList() {
     setValue("name", "");
     setModelState("Add");
   }
-  //---
+  //--- delete
 
   function deleteCategory(e) {
     e.preventDefault();
@@ -68,21 +78,23 @@ export default function CategoriesList() {
     setModelState("Delete");
     setItemId(id);
   }
-  //--- 
+  //--- update
   function showUpdateModal(categoryItem) {
     setItemId(categoryItem.id);
     setValue("name", categoryItem.name);
     setModelState("Update");
   }
   function updateCategory(data) {
+    sethandelLoadingOfModal(true)
     callApi({method:"put",path:`Category/${itemId}`,data,logedIn:true})
       .then((result) => {
         handleClose();
+        sethandelLoadingOfModal(false)
         getCategoryList();
         toast("Success");
       })
       .catch((error) => {
-        console.log(error);
+        sethandelLoadingOfModal(false)
         toast(error.message || "faild");
       });
   }
@@ -107,7 +119,7 @@ export default function CategoriesList() {
             </div>
           </div>
         </div>
-        {categoryList ? (
+        {isLoading?<Loading/>:categoryList ? (
           <table className="table">
             <thead>
               <tr>
@@ -176,7 +188,7 @@ export default function CategoriesList() {
           )}
           <hr />
           <div className="text-end">
-            <button className="btn btn-success px-4">Save</button>
+            <button className="btn btn-success px-4">{handelLoadingOfModal?<Loading/>:<span>Save</span>}</button>
           </div>
         </form>
       </Modal>
@@ -217,7 +229,7 @@ export default function CategoriesList() {
           )}
           <hr />
           <div className="text-end">
-            <button className="btn btn-success px-4">Save</button>
+            <button className="btn btn-success px-4">{handelLoadingOfModal?<Loading/>:<span>Save</span>}</button>
           </div>
         </form>
       </Modal>
