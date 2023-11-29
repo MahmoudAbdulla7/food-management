@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
-import { useForm } from 'react-hook-form';
 import logo from '../../../assets/1.png';
-import axios from 'axios';
-import {  toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { useForm,toast,callApi,useNavigate,Modal } from "../../../utls/index";
+
 export default function ChangePassword({show,handleClose}) {
   let {register,handleSubmit,formState:{errors}} =useForm();
   const [newPassword, setnewPassword] = useState('');
@@ -14,8 +11,7 @@ export default function ChangePassword({show,handleClose}) {
   }
   //api intgration
   function onSubmit(data) {
-    axios.put(`https://upskilling-egypt.com:443/api/v1/Users/ChangePassword`,data,
-    {headers:{Authorization:`Bearer ${localStorage.getItem(`adminTkn`)}`}})
+    callApi({path:"Users/ChangePassword",method:"put",data,logedIn:true})
     .then(result=>
       //toast && navigate
 {      toast(result.data.message)

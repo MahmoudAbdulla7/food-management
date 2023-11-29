@@ -1,26 +1,22 @@
-import React from 'react'
-import logo from '../../../assets/1.png'
-import { useForm } from 'react-hook-form'
-import axios from 'axios';
-import {  useNavigate } from 'react-router-dom';
-import {  toast } from 'react-toastify';
+import React, { useRef } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
-import { useState } from 'react';
-import { useRef } from 'react';
+import logo from '../../../assets/1.png';
+
+
+
+import { useForm,toast,callApi,useNavigate } from "../../../utls/index";
+
+
 
 export default function ResetPassword({saveAdminData}) {
   const navigate =useNavigate();
-  // const [newPassword, setnewPassword] = useState('');
-  // function newPasswordValue(e) {
-  //   setnewPassword(e.target.value);
-  // }
 
   let {register,handleSubmit,formState:{errors},watch} =useForm();
   const password = useRef({});
   password.current = watch('newPassword', '');
 
   function onSubmit(data) {
-    axios.post(`https://upskilling-egypt.com:443/api/v1/Users/Reset`,data)
+    callApi({method:"post",path:"Users/Reset",data})
     .then(result=>{
       toast("success");
       navigate("/login");

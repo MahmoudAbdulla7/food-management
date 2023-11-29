@@ -1,25 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../../SharedModule/Components/Header/Header";
-import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
-import { toast } from "react-toastify";
 import noData from "../../../assets/no data.svg";
-import { useForm } from "react-hook-form";
-import { Modal } from "react-bootstrap";
+import NoData from "../../../SharedModule/Components/NoData/NoData";
+import { useForm,toast,callApi,Modal } from "../../../utls/index";
+
 
 export default function RecipesList() {
   const [recipesList, setRecipesList] = useState([]);
   function getRecipesList() {
-    axios
-      .get(
-        `https://upskilling-egypt.com:443/api/v1/Recipe/?pageSize=5&pageNumber=1`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("adminTkn")}`,
-          },
-        }
-      )
+    callApi({ path: "Recipe/", pageNumber: "1", method: "get",logedIn:true })
       .then((result) => {
         setRecipesList(result.data.data);
       })
@@ -47,12 +36,7 @@ export default function RecipesList() {
   const handleClose = () => setModalState("close");
   const handleShow = () => setShow(true);
   function getTags() {
-    axios
-      .get(`https://upskilling-egypt.com:443/api/v1/tag/`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("adminTkn")}`,
-        },
-      })
+    callApi({ path: "tag/", pageSize:100,pageNumber: "1", method: "get",logedIn:true })
       .then((result) => {
         setTags(result.data);
       })
@@ -61,12 +45,7 @@ export default function RecipesList() {
       });
   }
   function getCategoryList() {
-    axios
-      .get(`https://upskilling-egypt.com:443/api/v1/Category/?pageSize=100&pageNumber=1`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("adminTkn")}`,
-        },
-      })
+    callApi({ path: "Category/", pageSize:100,pageNumber: "1", method: "get",logedIn:true })
       .then((result) => {
         setCategories(result.data.data);
       })
@@ -79,6 +58,9 @@ export default function RecipesList() {
   function showUpdateModal(recipe) {
     setModalState("update");
   }
+
+
+
   //--- Add
   function showAddModal(recipe) {
     setModalState("Add");
@@ -87,45 +69,31 @@ export default function RecipesList() {
     reset()
   }
   function addNewRecipe(data) {
-    const formData = new FormData();
-    const ob= Object.entries(data).forEach(([key, value]) => {
-      if (key ==! "recipeImage") {
-        return formData.append(key, value);
-      }else if(key=="price"||key=="tagId"||key=="categoriesIds"){
-        return formData.append(key, Number(value));
-      }
-      return formData.append(key, value[0]);
-    });
-
-    axios.post(`https://upskilling-egypt.com:443/api/v1/Recipe/`,formData, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("adminTkn")}`,
-        'Content-Type': 'multipart/form-data'
-      },
-    })
+    callApi({method:"post",path:"Recipe/",data,logedIn:true})
     .then((result) => {
       handleClose();
       getRecipesList();
       toast(result.data.message||"Created Successfully");
     })
     .catch((error) => {
+      console.log(error);
       toast("Faild");
       handleClose();
     });
     
   }
+
+
+
+
   //--- Delete
   function showDeleteModal(recipe) {
     setModalState("Delete");
     setitemId(recipe.id);
   }
-  function deleteRecipe() {
-    axios
-      .delete(`https://upskilling-egypt.com:443/api/v1/Recipe/${itemId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("adminTkn")}`,
-        },
-      })
+  function deleteRecipe(e) {
+    e.preventDefault();
+    callApi({method:"delete",path:`Recipe/${itemId}`,logedIn:true})
       .then((result) => {
         handleClose();
         getRecipesList();
@@ -156,7 +124,7 @@ export default function RecipesList() {
             </div>
           </div>
         </div>
-        <table className="table text-center">
+        {recipesList?        <table className="table text-center">
           <thead>
             <tr>
               <th className="py-3 bg-body-secondary" scope="col">
@@ -236,11 +204,11 @@ export default function RecipesList() {
               </tr>
             </tbody>
           ))}
-        </table>
+        </table>:<NoData/>}
       </div>
 
       <Modal className="p-5" show={modalState == "Delete"} onHide={handleClose}>
-        <form onSubmit={handleSubmit(deleteRecipe)} className="p-4 text-center">
+        <form onSubmit={deleteRecipe} className="p-4 text-center">
           <img src={noData} alt="#" />
           <h5 className="mb-5">Delete This Category ?</h5>
           <span className="text-muted">

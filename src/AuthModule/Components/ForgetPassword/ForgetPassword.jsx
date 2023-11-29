@@ -1,16 +1,14 @@
-import React from 'react'
-import logo from '../../../assets/1.png'
-import { useForm } from 'react-hook-form'
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import {  toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React from 'react';
+import logo from '../../../assets/1.png';
+import { useForm,toast,callApi,useNavigate } from "../../../utls/index";
+
+
 
 export default function ForgetPassword() {
   const navigate =useNavigate();
   let {register,handleSubmit,formState:{errors}} =useForm();
   function onSubmit(data) {
-    axios.post(`https://upskilling-egypt.com:443/api/v1/Users/Reset/Request`,data)
+    callApi({method:"post",path:"Users/Reset/Request",data})
     .then(result=>{
       toast(result.data.message);
       navigate("/reset-password");

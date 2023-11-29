@@ -2,7 +2,6 @@ import React from 'react'
 import Sidebar from '../Sidebar/Sidebar'
 import { Outlet } from 'react-router-dom'
 import Navbar from '../Navbar/Navbar'
-import Header from '../Header/Header'
 export default function MasterLayout({adminData}) {
   return (
     <>

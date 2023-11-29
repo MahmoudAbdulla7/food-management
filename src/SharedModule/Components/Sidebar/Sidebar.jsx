@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import ChangePassword from '../../../AuthModule/Components/ChangePassword/ChangePassword';
-import { Sidebar as Div , Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
+import { Sidebar as Div , Menu, MenuItem } from 'react-pro-sidebar';
 import logo from '../../../assets/3.png'
+
 export default function Sidebar() {
   const [show, setShow] = useState(false);
   const [isCollapsed, setisCollapsed] = useState(true);
