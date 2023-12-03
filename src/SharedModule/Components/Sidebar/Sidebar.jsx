@@ -22,9 +22,11 @@ export default function Sidebar() {
   }
   return (
     <>
-    <Div collapsed={isCollapsed}>
+    <div className='sidebar '>
+    <Div className='vh-100' collapsed={isCollapsed}>
   <Menu>
-  <MenuItem onClick={handelToggel} icon={<img src={logo} className='w-100' alt="logo" />} > <div className="text-center"> </div> </MenuItem>
+  {/* <div onClick={handelToggel}  > <img src={logo} className='w-75' alt="logo" /></div> */}
+  <div className='ms-3' onClick={handelToggel}> <img src={logo} className='w-75' alt="logo" /> </div>
   <MenuItem icon={<i className="fa-solid fa-house"></i>} component={<Link to="/dashboard" />}> Home</MenuItem>
     <MenuItem icon={<i className="fa-solid fa-people-group"></i>} component={<Link to="/dashboard/users" />}> Users</MenuItem>
     <MenuItem icon={<i className="fa-solid fa-bowl-rice"></i>} component={<Link to="/dashboard/recipes" />}> Recipes</MenuItem>
@@ -32,8 +34,9 @@ export default function Sidebar() {
     <MenuItem icon={<i className="fa-solid fa-lock"></i>} onClick={handleShow}> Change Password</MenuItem>
     <MenuItem icon={<i className="fa-solid fa-arrow-right-from-bracket"></i> } onClick={logout} >Logout</MenuItem>
   </Menu>
-</Div>;
+</Div>
 <ChangePassword show={show} handleClose={handleClose}/>
+    </div>
     </>
 
   )

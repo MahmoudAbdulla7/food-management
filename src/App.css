@@ -1,3 +1,7 @@
+body{
+    overflow-x: hidden;
+}
+
 .Auth-container{
     background-image: url('assets/bg.png') ;
     background-position: center center;
@@ -9,9 +13,17 @@
 .ps-sidebar-container{
     background-color: #1F263E !important;
     color: white;
-    height: 100vh !important;
+    height: 100% !important;
+    border-top-right-radius:50px !important;
 
 }
+
+.sidebar{
+    background-color: #1F263E !important;
+    color: white;
+    border-top-right-radius: 50px !important;
+}
+
 .ps-menu-button:hover {
     background-color: rgba(0, 148, 71,0.4)!important;
 }
@@ -24,4 +36,7 @@
 }
 .home-content{
     background-color:rgba(240, 255, 239, 1);
+}
+.loading-table{
+    height: 43vh !important;
 }

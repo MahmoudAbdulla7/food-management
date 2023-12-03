@@ -2,19 +2,34 @@ import React, { useEffect, useState } from "react";
 import Header from "../../../SharedModule/Components/Header/Header";
 import NoData from "../../../SharedModule/Components/NoData/NoData";
 import noData from "../../../assets/no data.svg";
-import { useForm,toast,callApi,Modal } from "../../../utls/index";
+import { useForm, toast, callApi, Modal } from "../../../utls/index";
 import Loading from "../../../SharedModule/Components/Loading/Loading";
-
-
+import Pagination from "../../../SharedModule/Components/Pagination/Pagination";
+import DeleteModal from "../../../SharedModule/Components/DeleteModal/DeleteModal";
 
 export default function CategoriesList() {
   const [categoryList, setCategoryList] = useState([]);
-  const [isLoading, setisLoading] = useState(false)
+  const [isLoading, setisLoading] = useState(false);
   const [handelLoadingOfModal, sethandelLoadingOfModal] = useState(false);
-  function getCategoryList() {
+  const [searchValue, setsearchValue] = useState("")
+  const [numberOfPages, setnumberOfPages] = useState([]);
+  function getCategoryList({ pageNumber = 1,name } = []) {
     setisLoading(true);
-    callApi({ path: "Category/", pageNumber: "1", method: "get" ,logedIn:true})
+    callApi({
+      path: "Category/",
+      pageNumber: pageNumber,
+      method: "get",
+      logedIn: true,
+      name
+    })
       .then((result) => {
+        setnumberOfPages(
+          Array(result.data.totalNumberOfPages)
+            .fill()
+            .map((_, i) => {
+              return i + 1;
+            })
+        );
         setCategoryList(result?.data?.data);
         setisLoading(false);
       })
@@ -34,23 +49,23 @@ export default function CategoriesList() {
   const handleShow = () => setShow(true);
   let {
     register,
-    
+
     handleSubmit,
     formState: { errors },
     setValue,
   } = useForm();
   //--- add
   function addNewCategory(data) {
-    sethandelLoadingOfModal(true)
-    callApi({method:"post",path:"Category/",data,logedIn:true})
+    sethandelLoadingOfModal(true);
+    callApi({ method: "post", path: "Category/", data, logedIn: true })
       .then((result) => {
-        sethandelLoadingOfModal(false)
+        sethandelLoadingOfModal(false);
         handleClose();
         getCategoryList();
         toast("Success");
       })
       .catch((error) => {
-        sethandelLoadingOfModal(false)
+        sethandelLoadingOfModal(false);
         toast(error.message || "faild");
       });
   }
@@ -59,20 +74,18 @@ export default function CategoriesList() {
     setModelState("Add");
   }
   //--- delete
-
   function deleteCategory(e) {
     e.preventDefault();
-    callApi({method:"delete",path:`Category/${itemId}`,logedIn:true})
-    .then((result) => {
-      handleClose();
-      getCategoryList();
-      toast("Delete Successfully");
-    })
-    .catch((error) => {
-      toast("Faild");
-      handleClose();
-    });
-
+    callApi({ method: "delete", path: `Category/${itemId}`, logedIn: true })
+      .then((result) => {
+        handleClose();
+        getCategoryList();
+        toast("Delete Successfully");
+      })
+      .catch((error) => {
+        toast("Faild");
+        handleClose();
+      });
   }
   function showDeleteModal(id) {
     setModelState("Delete");
@@ -85,16 +98,16 @@ export default function CategoriesList() {
     setModelState("Update");
   }
   function updateCategory(data) {
-    sethandelLoadingOfModal(true)
-    callApi({method:"put",path:`Category/${itemId}`,data,logedIn:true})
+    sethandelLoadingOfModal(true);
+    callApi({ method: "put", path: `Category/${itemId}`, data, logedIn: true })
       .then((result) => {
         handleClose();
-        sethandelLoadingOfModal(false)
+        sethandelLoadingOfModal(false);
         getCategoryList();
         toast("Success");
       })
       .catch((error) => {
-        sethandelLoadingOfModal(false)
+        sethandelLoadingOfModal(false);
         toast(error.message || "faild");
       });
   }
@@ -119,61 +132,72 @@ export default function CategoriesList() {
             </div>
           </div>
         </div>
-        {isLoading?<Loading/>:categoryList ? (
-          <table className="table">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Actions</th>
-              </tr>
-            </thead>
-            {categoryList?.map((category) => (
-              <tbody key={category.id}>
+        <div className="nameValue">
+          <input onChange={(e)=>{setsearchValue(e.target.value); return getCategoryList({name:e.target.value})}} className="form-control my-2" placeholder="Name of category" type="text" />
+        </div>
+        {isLoading ? (
+          <div className="loading-table fs-1 text-black-50 d-flex justify-content-center align-items-center">
+            {" "}
+            <Loading />
+          </div>
+        ) : categoryList.length>0 ? (
+          <>
+            <table className="table">
+              <thead>
                 <tr>
-                  <th scope="row">{category.id}</th>
-                  <td>{category.name}</td>
-                  <td>
-                    <div className="dropdown">
-                      <button
-                        className="btn  text-success"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        <i className="fa-solid fa-ellipsis"></i>
-                      </button>
-                      <ul className="dropdown-menu">
-                        <li>
-                          <p
-                            onClick={() => showUpdateModal(category)}
-                            className="px-2 py-1 btn"
-                          >
-                            <i className="fa-regular fa-pen-to-square text-success"></i>{" "}
-                            Update
-                          </p>
-                        </li>
-                        <li>
-                          <p
-                            onClick={() => showDeleteModal(category.id)}
-                            className="px-2 py-1 btn"
-                          >
-                            <i className="fa-regular fa-trash-can text-success"></i>{" "}
-                            Delete
-                          </p>
-                        </li>
-                      </ul>
-                    </div>
-                  </td>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Actions</th>
                 </tr>
-              </tbody>
-            ))}
-          </table>
+              </thead>
+              {categoryList?.map((category, idx) => (
+                <tbody key={category.id}>
+                  <tr>
+                    <th scope="row">{idx + 1}</th>
+                    <td>{category.name}</td>
+                    <td>
+                      <div className="dropdown">
+                        <button
+                          className="btn  text-success"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i className="fa-solid fa-ellipsis"></i>
+                        </button>
+                        <ul className="dropdown-menu">
+                          <li>
+                            <p
+                              onClick={() => showUpdateModal(category)}
+                              className="px-2 py-1 btn"
+                            >
+                              <i className="fa-regular fa-pen-to-square text-success"></i>{" "}
+                              Update
+                            </p>
+                          </li>
+                          <li>
+                            <p
+                              onClick={() => showDeleteModal(category.id)}
+                              className="px-2 py-1 btn"
+                            >
+                              <i className="fa-regular fa-trash-can text-success"></i>{" "}
+                              Delete
+                            </p>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              ))}
+            </table>
+          </>
         ) : (
           <NoData />
         )}
       </div>
 
+      <Pagination getList={getCategoryList} numberOfPages={numberOfPages} searchValue={searchValue}/>
       <Modal className="p-5" show={modelState == "Add"} onHide={handleClose}>
         <form onSubmit={handleSubmit(addNewCategory)} className="p-4">
           <h2 className="mb-5">Add Category</h2>
@@ -188,33 +212,13 @@ export default function CategoriesList() {
           )}
           <hr />
           <div className="text-end">
-            <button className="btn btn-success px-4">{handelLoadingOfModal?<Loading/>:<span>Save</span>}</button>
-          </div>
-        </form>
-      </Modal>
-
-      <Modal className="p-5" show={modelState == "Delete"} onHide={handleClose}>
-        <form
-          onSubmit={deleteCategory}
-          className="p-4 text-center"
-        >
-          <img src={noData} alt="#" />
-          <h5 className="mb-5">Delete This Category ?</h5>
-          <span className="text-muted">
-            are you sure you want to delete this item ? if you are sure just
-            click on delete it
-          </span>
-          <hr />
-          <div className="text-end">
-            <button
-              className="btn btn-danger px-4"
-            >
-              Delete this item
+            <button className="btn btn-success px-4">
+              {handelLoadingOfModal ? <Loading /> : <span>Save</span>}
             </button>
           </div>
         </form>
       </Modal>
-
+      <DeleteModal modelState={modelState} handleClose={handleClose} onSubmit={deleteCategory}/>
       <Modal className="p-5" show={modelState == "Update"} onHide={handleClose}>
         <form onSubmit={handleSubmit(updateCategory)} className="p-4">
           <h2 className="mb-5">Add Category</h2>
@@ -229,7 +233,9 @@ export default function CategoriesList() {
           )}
           <hr />
           <div className="text-end">
-            <button className="btn btn-success px-4">{handelLoadingOfModal?<Loading/>:<span>Save</span>}</button>
+            <button className="btn btn-success px-4">
+              {handelLoadingOfModal ? <Loading /> : <span>Save</span>}
+            </button>
           </div>
         </form>
       </Modal>

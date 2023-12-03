@@ -6,6 +6,11 @@ export function callApi({
   data,
   pageSize = 5,
   logedIn = false,
+  name,
+  userName,
+  tagId,
+  categoryId,
+  groups
 } = []) {
   const url = `https://upskilling-egypt.com:443/api/v1/`;
   const full_url = `${url}${path}`;
@@ -18,12 +23,19 @@ export function callApi({
       params: {
         pageSize: pageSize,
         pageNumber: pageNumber,
+        name:name,
+        tagId:tagId,
+        categoryId:categoryId,
+        userName:userName,
+        groups
       },
     });
   } else if (logedIn == true && method != "get") {
-    if (path == "Recipe/" && method !== "delete") {
+
+    if (path.includes("Recipe/") && method !== "delete") {
+
+
       const formData = new FormData();
-      
       Object.entries(data).forEach(([key, value]) => {
         if (key == !"recipeImage") {
           return formData.append(key, value);
@@ -33,7 +45,7 @@ export function callApi({
         return formData.append(key, value[0]);
       });
 
-      return axios[method](`${full_url}`, data, {
+      return axios[method](`${full_url}`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("adminTkn")}`,
           "Content-Type": "multipart/form-data",

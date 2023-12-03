@@ -5,14 +5,10 @@ import Navbar from '../Navbar/Navbar'
 export default function MasterLayout({adminData}) {
   return (
     <>
-    <div className="container-fluid">
-        <div className="row">
-            <div className="col-md-2 p-0">
 
+        <div className="d-flex w-100">
                 <Sidebar/>
-
-            </div>
-            <div className="col-md-10 p-0">
+            <div className="w-100 mx-3">
                 <div>
                     <Navbar adminData={adminData}/>
                     <Outlet/>
@@ -20,7 +16,7 @@ export default function MasterLayout({adminData}) {
                 </div>
             </div>
         </div>
-    </div>
+
     </>
   )
 }
