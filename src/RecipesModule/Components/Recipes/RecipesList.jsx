@@ -346,26 +346,7 @@ export default function RecipesList() {
         numberOfPages={numberOfPages}
       />
 
-      <Modal className="p-5" show={modalState == "Delete"} onHide={handleClose}>
-        <form onSubmit={deleteRecipe} className="p-4 text-center">
-          <img src={noData} alt="#" />
-          <h5 className="mb-5">Delete This Category ?</h5>
-          <span className="text-muted">
-            are you sure you want to delete this item ? if you are sure just
-            click on delete it
-          </span>
-          <hr />
-          <div className="text-end">
-            <button className="btn btn-danger px-4">
-              {handelLoadingOfModal ? (
-                <Loading />
-              ) : (
-                <span>Delete this item</span>
-              )}
-            </button>
-          </div>
-        </form>
-      </Modal>
+<DeleteModal modelState={modalState} handleClose={handleClose} onSubmit={deleteRecipe}/>
       <Modal className="p-5" show={modalState == "Add"} onHide={handleClose}>
         {flag ? (
           <div className="p-5">
@@ -499,7 +480,149 @@ export default function RecipesList() {
           </>
         )}
       </Modal>
-      <DeleteModal modelState={modalState} handleClose={handleClose} onSubmit={deleteRecipe}/>
+      <Modal className="p-5" show={modalState == "Update"} onHide={handleClose}>
+        {flag ? (
+          <div className="p-5">
+            <Loading />
+          </div>
+        ) : (
+          <>
+            <h2 className="px-4 pt-5">Update recipe</h2>
+            <form onSubmit={handleSubmit(updateRecipe)} className="pb-5 px-4 ">
+              <div className="Recipe-Name">
+                <input
+                  className="form-control"
+                  placeholder="Recipe Name"
+                  type="text"
+                  defaultValue=""
+                  {...register("name", { required: "Name is required" })}
+                />
+                {errors.name && (
+                  <span className="text-danger ms-2">
+                    {errors.name.message}
+                  </span>
+                )}
+              </div>
+              <div className="Price my-2">
+                <div className="input-group">
+                  <input
+                    defaultValue={0}
+                    type="number"
+                    className="form-control"
+                    placeholder="Price"
+                    {...register("price", {
+                      required: "Price is required",
+                      setValueAs: Number,
+                    })}
+                  />
+                  <span className="input-group-text" id="basic-addon2">
+                    EGP
+                  </span>
+                </div>
+                {errors.price && (
+                  <span className="text-danger ms-2 ">
+                    {errors.price.message}
+                  </span>
+                )}
+              </div>
+              <div className="Tag my-2">
+                <select
+                  className="form-select"
+                  itemType="Number"
+                  aria-label="Default select example"
+                  {...register("tagId", {
+                    required: "Please select a tag",
+                    setValueAs: Number,
+                  })}
+                >
+                  {tags.map((tag, idx) => {
+                    return (
+                      <option key={idx} value={tag.id}>
+                        {tag.name}
+                      </option>
+                    );
+                  })}
+                </select>
+                {errors.tagId && (
+                  <span className="text-danger ms-2">
+                    {errors.tagId.message}
+                  </span>
+                )}
+              </div>
+              <div className="Categories my-2">
+                <select
+                  className="form-select"
+                  aria-label="Default select example"
+                  itemType="number"
+                  {...register("categoriesIds", {
+                    required: "Please select a tag",
+                    setValueAs: Number,
+                  })}
+                >
+                  {categories.map((category, idx) => {
+                    return (
+                      <option key={idx} value={category.id}>
+                        {category.name}
+                      </option>
+                    );
+                  })}
+                </select>
+                {errors.categoriesIds && (
+                  <span className="text-danger ms-2">
+                    {errors.categoriesIds.message}
+                  </span>
+                )}
+              </div>
+              <div className="Recipe-Description my-2">
+                <textarea
+                  className="form-control my-2"
+                  placeholder="description"
+                  type="text"
+                  {...register("description", {
+                    required: "Description is required",
+                  })}
+                />
+                {errors.description && (
+                  <span className="text-danger ms-2">
+                    {errors.description.message}
+                  </span>
+                )}
+              </div>
+              <div className="Recipe-Image">
+                <input
+                  className="form-control"
+                  placeholder="Recipe Name"
+                  type="file"
+                  {...register("recipeImage", {
+                    required: "Image is required",
+                  })}
+                />
+                {errors.recipeImage && (
+                  <span className="text-danger ms-2">
+                    {errors.recipeImage.message}
+                  </span>
+                )}
+              </div>
+              {item?.imagePath ? (
+                <div className="Recipe-Display-Image text-center ">
+                  <img
+                    className="w-25"
+                    src={`https://upskilling-egypt.com:443/${item?.imagePath}`}
+                    alt=""
+                  />
+                </div>
+              ) : (
+                ""
+              )}
+              <div className="text-end my-2">
+                <button className="btn btn-success">
+                  {handelLoadingOfModal ? <Loading /> : <span>Save</span>}
+                </button>
+              </div>
+            </form>
+          </>
+        )}
+      </Modal>
     </>
   );
 }
