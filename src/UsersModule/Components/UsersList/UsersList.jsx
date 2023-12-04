@@ -12,6 +12,7 @@ export default function UsersList() {
   const [usersList, setUsersList] = useState([]);
   const [numberOfPages, setNumberOfPages] = useState([]);
   const [isLoading, setisLoading] = useState(false);
+  const [handelLoadingOfModal, sethandelLoadingOfModal] = useState(false);
   const [modelState, setModelState] = useState("close");
   const [searchValue, setSearchValue] = useState(null);
   const [itemId, setItemId] = useState();
@@ -56,14 +57,16 @@ export default function UsersList() {
 
   function deleteUser(e) {
     e.preventDefault();
+    sethandelLoadingOfModal(true);
     callApi({ method: "delete", path: `Users/${itemId}`, logedIn: true })
       .then((result) => {
-        console.log(result.data);
         handleClose();
+        sethandelLoadingOfModal(false);
         getUsersList();
         toast(result.data.message || "Deleted Successfully");
       })
       .catch((error) => {
+        sethandelLoadingOfModal(false);
         toast(error.response.data.message || "Faild");
         handleClose();
       });
@@ -190,7 +193,7 @@ export default function UsersList() {
       />
 
       
-      <DeleteModal modelState={modelState} handleClose={handleClose} onSubmit={deleteUser}/>
+      <DeleteModal isLoading={handelLoadingOfModal} modelState={modelState} handleClose={handleClose} onSubmit={deleteUser}/>
 
     </>
   );

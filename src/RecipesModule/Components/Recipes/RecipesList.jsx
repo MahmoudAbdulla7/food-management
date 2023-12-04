@@ -346,7 +346,7 @@ export default function RecipesList() {
         numberOfPages={numberOfPages}
       />
 
-<DeleteModal modelState={modalState} handleClose={handleClose} onSubmit={deleteRecipe}/>
+<DeleteModal isLoading={handelLoadingOfModal} modelState={modalState} handleClose={handleClose} onSubmit={deleteRecipe}/>
       <Modal className="p-5" show={modalState == "Add"} onHide={handleClose}>
         {flag ? (
           <div className="p-5">

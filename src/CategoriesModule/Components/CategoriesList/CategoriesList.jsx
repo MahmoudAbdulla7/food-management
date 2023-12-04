@@ -9,12 +9,14 @@ import DeleteModal from "../../../SharedModule/Components/DeleteModal/DeleteModa
 
 export default function CategoriesList() {
   const [categoryList, setCategoryList] = useState([]);
-  const [isLoading, setisLoading] = useState(false);
-  const [handelLoadingOfModal, sethandelLoadingOfModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [handelLoadingOfModal, setHandelLoadingOfModal] = useState(false);
   const [searchValue, setsearchValue] = useState("")
   const [numberOfPages, setnumberOfPages] = useState([]);
+
+
   function getCategoryList({ pageNumber = 1,name } = []) {
-    setisLoading(true);
+    setIsLoading(true);
     callApi({
       path: "Category/",
       pageNumber: pageNumber,
@@ -31,13 +33,14 @@ export default function CategoriesList() {
             })
         );
         setCategoryList(result?.data?.data);
-        setisLoading(false);
+        setIsLoading(false);
       })
       .catch((errors) => {
         toast(errors.message || "error");
-        setisLoading(false);
+        setIsLoading(false);
       });
   }
+
   useEffect(() => {
     getCategoryList();
   }, []);
@@ -56,16 +59,16 @@ export default function CategoriesList() {
   } = useForm();
   //--- add
   function addNewCategory(data) {
-    sethandelLoadingOfModal(true);
+    setHandelLoadingOfModal(true);
     callApi({ method: "post", path: "Category/", data, logedIn: true })
       .then((result) => {
-        sethandelLoadingOfModal(false);
+        setHandelLoadingOfModal(false);
         handleClose();
         getCategoryList();
         toast("Success");
       })
       .catch((error) => {
-        sethandelLoadingOfModal(false);
+        setHandelLoadingOfModal(false);
         toast(error.message || "faild");
       });
   }
@@ -76,14 +79,17 @@ export default function CategoriesList() {
   //--- delete
   function deleteCategory(e) {
     e.preventDefault();
+    setHandelLoadingOfModal(true);
     callApi({ method: "delete", path: `Category/${itemId}`, logedIn: true })
       .then((result) => {
         handleClose();
         getCategoryList();
+        setHandelLoadingOfModal(false);
         toast("Delete Successfully");
       })
       .catch((error) => {
         toast("Faild");
+        setHandelLoadingOfModal(false);
         handleClose();
       });
   }
@@ -98,16 +104,16 @@ export default function CategoriesList() {
     setModelState("Update");
   }
   function updateCategory(data) {
-    sethandelLoadingOfModal(true);
+    setHandelLoadingOfModal(true);
     callApi({ method: "put", path: `Category/${itemId}`, data, logedIn: true })
       .then((result) => {
         handleClose();
-        sethandelLoadingOfModal(false);
+        setHandelLoadingOfModal(false);
         getCategoryList();
         toast("Success");
       })
       .catch((error) => {
-        sethandelLoadingOfModal(false);
+        setHandelLoadingOfModal(false);
         toast(error.message || "faild");
       });
   }
@@ -218,7 +224,7 @@ export default function CategoriesList() {
           </div>
         </form>
       </Modal>
-      <DeleteModal modelState={modelState} handleClose={handleClose} onSubmit={deleteCategory}/>
+      <DeleteModal isLoading={handelLoadingOfModal} modelState={modelState} handleClose={handleClose} onSubmit={deleteCategory}/>
       <Modal className="p-5" show={modelState == "Update"} onHide={handleClose}>
         <form onSubmit={handleSubmit(updateCategory)} className="p-4">
           <h2 className="mb-5">Add Category</h2>

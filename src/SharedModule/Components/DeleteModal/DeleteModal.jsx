@@ -2,7 +2,9 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap'
 import noData from '../../../assets/no data.svg'
-export default function DeleteModal({onSubmit,modelState,handleClose}) {
+import Loading from '../Loading/Loading'
+
+export default function DeleteModal({isLoading, onSubmit,modelState,handleClose}) {
   return (
     <Modal className="p-5" show={modelState == "Delete"} onHide={handleClose}>
     <form onSubmit={onSubmit} className="p-4 text-center">
@@ -14,7 +16,7 @@ export default function DeleteModal({onSubmit,modelState,handleClose}) {
       </span>
       <hr />
       <div className="text-end">
-        <button className="btn btn-danger px-4">Delete this item</button>
+        <button className="btn btn-danger px-4">{isLoading?<Loading/>:"Delete this item"}</button>
       </div>
     </form>
   </Modal>
