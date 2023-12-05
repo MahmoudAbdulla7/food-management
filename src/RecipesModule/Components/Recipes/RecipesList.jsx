@@ -1,23 +1,35 @@
 import React, { useEffect, useState } from "react";
+import DeleteModal from "../../../SharedModule/Components/DeleteModal/DeleteModal";
 import Header from "../../../SharedModule/Components/Header/Header";
 import Loading from "../../../SharedModule/Components/Loading/Loading";
 import NoData from "../../../SharedModule/Components/NoData/NoData";
+import Pagination from "../../../SharedModule/Components/Pagination/Pagination";
 import noData from "../../../assets/no data.svg";
 import { Modal, callApi, toast, useForm } from "../../../utls/index";
-import Pagination from "../../../SharedModule/Components/Pagination/Pagination";
-import DeleteModal from "../../../SharedModule/Components/DeleteModal/DeleteModal";
 
 export default function RecipesList() {
   const [recipesList, setRecipesList] = useState([]);
-  const [isLoading, setisLoading] = useState(false);
-  const [handelLoadingOfModal, sethandelLoadingOfModal] = useState(false);
-  const [flag, setflag] = useState(false);
-  const [numberOfPages, setnumberOfPages] = useState([]);
-  const [searchValue, setsearchValue] = useState(null);
-  const [tagId, settagId] = useState(null);
-  const [categoryId, setcategoryId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [handelLoadingOfModal, setHandelLoadingOfModal] = useState(false);
+  const [flag, setFlag] = useState(false);
+  const [numberOfPages, setNumberOfPages] = useState([]);
+  const [searchValue, setSearchValue] = useState(null);
+  const [tagId, setTagId] = useState(null);
+  const [categoryId, setCategoryId] = useState(null);
+  const [show, setShow] = useState(false);
+  const [itemId, setitemId] = useState();
+  const [item, setitem] = useState();
+  const [tags, setTags] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [modalState, setModalState] = useState("close");
+  const handleClose = () => setModalState("close");
+
+  //---
+
   function getRecipesList({ pageNumber = 1, name,categoryId,tagId } = []) {
-    setisLoading(true);
+
+    setIsLoading(true);
+
     callApi({
       path: "Recipe/",
       pageNumber: "1",
@@ -27,8 +39,8 @@ export default function RecipesList() {
       name,tagId,categoryId
     })
       .then((result) => {
-        setisLoading(false);
-        setnumberOfPages(
+        setIsLoading(false);
+        setNumberOfPages(
           Array(result.data.totalNumberOfPages)
             .fill()
             .map((_, i) => i + 1)
@@ -36,15 +48,18 @@ export default function RecipesList() {
         setRecipesList(result.data.data);
       })
       .catch((errors) => {
-        setisLoading(false);
+        setIsLoading(false);
         toast(errors?.data?.message||"Network Error");
       });
   }
+
   useEffect(() => {
     getRecipesList();
     getCategoryList();
     getTags();
   }, []);
+
+
   // handel modal
   let {
     register,
@@ -53,14 +68,9 @@ export default function RecipesList() {
     setValue,
     reset,
   } = useForm();
-  const [show, setShow] = useState(false);
-  const [itemId, setitemId] = useState();
-  const [item, setitem] = useState();
-  const [tags, setTags] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [modalState, setModalState] = useState("close");
-  const handleClose = () => setModalState("close");
- 
+
+  //---
+
   function getTags() {
     callApi({
       path: "tag/",
@@ -76,8 +86,10 @@ export default function RecipesList() {
         toast("Network Error");
       });
   }
+
   function getCategoryList() {
-    setflag(true);
+    setFlag(true);
+
     callApi({
       path: "Category/",
       pageSize: 100,
@@ -86,112 +98,128 @@ export default function RecipesList() {
       logedIn: true,
     })
       .then((result) => {
-        setflag(false);
+        setFlag(false);
         setCategories(result.data.data);
       })
       .catch((errors) => {
-        setflag(false);
+        setFlag(false);
         toast("Network Error");
       });
   }
+
   //---Update
+
   function showUpdateModal(recipe) {
     setModalState("Update");
     setitem(recipe);
+
     Object.entries(recipe).forEach(([key, value]) => {
       setValue(key, value);
     });
   }
+
+
   function updateRecipe(data) {
-    sethandelLoadingOfModal(true)
+
+    setHandelLoadingOfModal(true);
+
     callApi({ method: "put", path: `Recipe/${item.id}`, logedIn: true, data })
       .then((res) => {
         handleClose();
         getRecipesList();
-        sethandelLoadingOfModal(false)
+        setHandelLoadingOfModal(false)
         toast(res.data.message || "Updated Successfully");
       })
       .catch((err) => {
-        sethandelLoadingOfModal(false)
+        setHandelLoadingOfModal(false)
         toast("Faild");
         handleClose();
       });
   }
+
   //--- Add
   function showAddModal(recipe) {
     setModalState("Add");
     reset();
   }
+
   function addNewRecipe(data) {
-    sethandelLoadingOfModal(true);
+
+    setHandelLoadingOfModal(true);
+
     callApi({ method: "post", path: "Recipe/", data, logedIn: true })
       .then((result) => {
-        sethandelLoadingOfModal(false);
+        setHandelLoadingOfModal(false);
         handleClose();
         getRecipesList();
         toast(result.data.message || "Created Successfully");
       })
       .catch((error) => {
-        sethandelLoadingOfModal(false);
+        setHandelLoadingOfModal(false);
         toast("Faild");
         handleClose();
       });
   }
+
   //--- Delete
   function showDeleteModal(recipe) {
     setModalState("Delete");
     setitemId(recipe.id);
   }
   function deleteRecipe(e) {
-    sethandelLoadingOfModal(true);
+    setHandelLoadingOfModal(true);
     e.preventDefault();
     callApi({ method: "delete", path: `Recipe/${itemId}`, logedIn: true })
       .then((result) => {
-        sethandelLoadingOfModal(false);
+        setHandelLoadingOfModal(false);
         handleClose();
         getRecipesList();
         toast("Delete Successfully");
       })
       .catch((error) => {
-        sethandelLoadingOfModal(false);
+        setHandelLoadingOfModal(false);
         toast("Faild");
         handleClose();
       });
   }
+
   //--- filltration
   function fillterByTag(e) {
-    settagId(e.target.value)
+    setTagId(e.target.value)
     getRecipesList({name:searchValue,categoryId,tagId:e.target.value});
   }
+
   function fillterByCategory(e) {
-    setcategoryId(e.target.value)
+    setCategoryId(e.target.value)
     getRecipesList({name:searchValue,categoryId:e.target.value,tagId});
   }
+  
   let searchByName=(e) => {
-    setsearchValue(e.target.value);
+    setSearchValue(e.target.value);
     return getRecipesList({ name: e.target.value,tagId,categoryId });
   }
+  
   return (
-    <>
+    <div className="handel-table-responsive">
       <Header />
       <div>
-        <div className="d-flex justify-content-center py-4">
-          <div className="col-md-6">
+        <div className="row justify-content-center py-4">
+          <div className="col-md-6 px-4">
             <div>
               <h4>Recipe Table Details</h4>
               <span>You can check all details</span>
             </div>
           </div>
           <div className="col-md-6">
-            <div className="text-end">
+            <div className="categoryButton">
               <button onClick={showAddModal} className="btn btn-success me-1">
                 Add New Recipe
               </button>
             </div>
           </div>
         </div>
-        <div className="d-flex my-2">
-          <div className="col-md-6">
+        <div className="row my-2">
+          <div className="col-md-6 my-2">
             <div className="nameValue pe-2">
               <input
                 onChange={searchByName}
@@ -201,7 +229,7 @@ export default function RecipesList() {
               />
             </div>
           </div>
-          <div className="col-md-3">
+          <div className="col-md-3 my-2">
             <div className="Tag px-2">
               <select onChange={fillterByTag}
                 className="form-select"
@@ -219,7 +247,7 @@ export default function RecipesList() {
               </select>
             </div>
           </div>
-          <div className="col-md-3">
+          <div className="col-md-3 my-2">
             <div className="Categories px-2">
               <select
               onChange={fillterByCategory}
@@ -240,14 +268,15 @@ export default function RecipesList() {
             </div>
           </div>
         </div>
-
+        <div className="">
+          
      {isLoading ? (
           <div className="loading-table fs-1 text-black-50 d-flex justify-content-center align-items-center">
             <Loading />
           </div>
         ) : recipesList.length > 0 ? (
-          <div className="table-responsive">
-                      <table className="table table-striped  text-center">
+          <div className="table-responsive ">
+                      <table className="table  table-striped  text-center">
             <thead className="table-light">
               <tr>
                 <th className="py-3 bg-body-secondary" scope="col">
@@ -336,6 +365,8 @@ export default function RecipesList() {
         ) : (
           <NoData />
         )} 
+        </div>
+
       </div>
 
 
@@ -623,6 +654,6 @@ export default function RecipesList() {
           </>
         )}
       </Modal>
-    </>
+    </div>
   );
 }

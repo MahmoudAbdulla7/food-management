@@ -11,17 +11,22 @@ import DeleteModal from "../../../SharedModule/Components/DeleteModal/DeleteModa
 export default function UsersList() {
   const [usersList, setUsersList] = useState([]);
   const [numberOfPages, setNumberOfPages] = useState([]);
-  const [isLoading, setisLoading] = useState(false);
-  const [handelLoadingOfModal, sethandelLoadingOfModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [handelLoadingOfModal, setHandelLoadingOfModal] = useState(false);
   const [modelState, setModelState] = useState("close");
   const [searchValue, setSearchValue] = useState(null);
   const [itemId, setItemId] = useState();
   const [group, setGroup] = useState(null);
+
+
   const handleShow = () => setShow(true);
   const handleClose = () => setModelState("close");
+
+
   // get Data from Api
   function getUsersList({ pageNumber = 1, userName, groups } = []) {
-    setisLoading(true);
+    setIsLoading(true);
+
     callApi({
       path: "Users/",
       pageNumber: pageNumber,
@@ -39,38 +44,46 @@ export default function UsersList() {
             })
         );
         setUsersList(result?.data?.data);
-        setisLoading(false);
+        setIsLoading(false);
       })
       .catch((errors) => {
-        toast(errors.message || "error");
-        setisLoading(false);
+        toast(errors.response.data.message || "error");
+        setIsLoading(false);
       });
-  }
+  };
+
+
   useEffect(() => {
     getUsersList();
   }, []);
+
+  //---
+
   function showDeleteModal(id) {
     setModelState("Delete");
-    console.log(id);
   }
+
   // --- Dalete User
 
   function deleteUser(e) {
+
     e.preventDefault();
-    sethandelLoadingOfModal(true);
+    setHandelLoadingOfModal(true);
+
     callApi({ method: "delete", path: `Users/${itemId}`, logedIn: true })
       .then((result) => {
         handleClose();
-        sethandelLoadingOfModal(false);
+        setHandelLoadingOfModal(false);
         getUsersList();
         toast(result.data.message || "Deleted Successfully");
       })
       .catch((error) => {
-        sethandelLoadingOfModal(false);
+        setHandelLoadingOfModal(false);
         toast(error.response.data.message || "Faild");
         handleClose();
       });
   }
+  
   function showDeleteModal(id) {
     setModelState("Delete");
     setItemId(id);

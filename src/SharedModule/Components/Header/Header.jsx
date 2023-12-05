@@ -31,10 +31,10 @@ export default function Header({adminData}) {
       <div className="row align-items-center ">
         <div className="col-md-10">
           <div>
-            <h2>
+            <h2 className='titelOfHeader'>
              {headers[path]?.h2}
             </h2>
-            <p className='text-muted-light'>{headers[path]?.p}</p>
+            <p className='text-muted-light pargraphOfHeader'>{headers[path]?.p}</p>
           </div>
         </div>
         <div className="col-md-2">

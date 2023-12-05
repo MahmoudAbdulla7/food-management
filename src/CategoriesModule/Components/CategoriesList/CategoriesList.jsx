@@ -11,8 +11,12 @@ export default function CategoriesList() {
   const [categoryList, setCategoryList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [handelLoadingOfModal, setHandelLoadingOfModal] = useState(false);
-  const [searchValue, setsearchValue] = useState("")
-  const [numberOfPages, setnumberOfPages] = useState([]);
+  const [searchValue, setSearchValue] = useState(null)
+  const [numberOfPages, setNumberOfPages] = useState([]);
+  const [show, setShow] = useState(false);
+  const [itemId, setItemId] = useState(null);
+  const [modelState, setModelState] = useState("close");
+  const handleShow = () => setShow(true);
 
 
   function getCategoryList({ pageNumber = 1,name } = []) {
@@ -25,7 +29,7 @@ export default function CategoriesList() {
       name
     })
       .then((result) => {
-        setnumberOfPages(
+        setNumberOfPages(
           Array(result.data.totalNumberOfPages)
             .fill()
             .map((_, i) => {
@@ -46,10 +50,6 @@ export default function CategoriesList() {
   }, []);
 
   // handel model --
-  const [show, setShow] = useState(false);
-  const [itemId, setItemId] = useState("");
-  const [modelState, setModelState] = useState("close");
-  const handleShow = () => setShow(true);
   let {
     register,
 
@@ -57,9 +57,13 @@ export default function CategoriesList() {
     formState: { errors },
     setValue,
   } = useForm();
+
+
   //--- add
   function addNewCategory(data) {
+
     setHandelLoadingOfModal(true);
+
     callApi({ method: "post", path: "Category/", data, logedIn: true })
       .then((result) => {
         setHandelLoadingOfModal(false);
@@ -72,14 +76,18 @@ export default function CategoriesList() {
         toast(error.message || "faild");
       });
   }
+
   function showAddModal() {
-    setValue("name", "");
+    setValue("name", null);
     setModelState("Add");
   }
+
   //--- delete
   function deleteCategory(e) {
+
     e.preventDefault();
     setHandelLoadingOfModal(true);
+
     callApi({ method: "delete", path: `Category/${itemId}`, logedIn: true })
       .then((result) => {
         handleClose();
@@ -93,16 +101,19 @@ export default function CategoriesList() {
         handleClose();
       });
   }
+
   function showDeleteModal(id) {
     setModelState("Delete");
     setItemId(id);
   }
+
   //--- update
   function showUpdateModal(categoryItem) {
     setItemId(categoryItem.id);
     setValue("name", categoryItem.name);
     setModelState("Update");
   }
+
   function updateCategory(data) {
     setHandelLoadingOfModal(true);
     callApi({ method: "put", path: `Category/${itemId}`, data, logedIn: true })
@@ -117,21 +128,22 @@ export default function CategoriesList() {
         toast(error.message || "faild");
       });
   }
+
   const handleClose = () => setModelState("close");
 
   return (
     <>
       <div>
         <Header />
-        <div className="d-flex justify-content-center py-4">
-          <div className="col-md-6">
+        <div className="row justify-content-between py-4">
+          <div className="col-md-6 px-4 text-dark">
             <div>
               <h4>Categories Table Details</h4>
               <span>You can check all details</span>
             </div>
           </div>
           <div className="col-md-6">
-            <div className="text-end">
+            <div className=" categoryButton">
               <button onClick={showAddModal} className="btn btn-success me-1">
                 Add New Category
               </button>
@@ -139,7 +151,7 @@ export default function CategoriesList() {
           </div>
         </div>
         <div className="nameValue">
-          <input onChange={(e)=>{setsearchValue(e.target.value); return getCategoryList({name:e.target.value})}} className="form-control my-2" placeholder="Name of category" type="text" />
+          <input onChange={(e)=>{setSearchValue(e.target.value); return getCategoryList({name:e.target.value})}} className="form-control my-2" placeholder="Name of category" type="text" />
         </div>
         {isLoading ? (
           <div className="loading-table fs-1 text-black-50 d-flex justify-content-center align-items-center">
@@ -148,7 +160,7 @@ export default function CategoriesList() {
           </div>
         ) : categoryList.length>0 ? (
           <>
-            <table className="table">
+            <table className="table table-responsive">
               <thead>
                 <tr>
                   <th scope="col">#</th>

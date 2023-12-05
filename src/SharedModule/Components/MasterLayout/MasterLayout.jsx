@@ -8,7 +8,7 @@ export default function MasterLayout({adminData}) {
 
         <div className="d-flex w-100">
                 <Sidebar/>
-            <div className="w-100 mx-3">
+            <div className="w-100 ">
                 <div>
                     <Navbar adminData={adminData}/>
                     <Outlet/>
