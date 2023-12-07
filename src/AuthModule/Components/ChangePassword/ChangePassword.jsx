@@ -3,7 +3,7 @@ import logo from "../../../assets/1.png";
 import {
   useForm,
   toast,
-  callApi,
+  customFetch,
   useNavigate,
   Modal,
 } from "../../../utls/index";
@@ -24,7 +24,7 @@ export default function ChangePassword({ show, handleClose }) {
   //api intgration
   function onSubmit(data) {
     setisLoading(true);
-    callApi({
+    customFetch({
       path: "Users/ChangePassword",
       method: "put",
       data,

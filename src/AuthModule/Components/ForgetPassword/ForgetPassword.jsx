@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
 import logo from '../../../assets/1.png';
-import { useForm,toast,callApi,useNavigate } from "../../../utls/index";
+import { useForm,toast,customFetch,useNavigate } from "../../../utls/index";
 import Loading from '../../../SharedModule/Components/Loading/Loading';
 
 
@@ -12,7 +12,7 @@ export default function ForgetPassword() {
   let {register,handleSubmit,formState:{errors}} =useForm();
   function onSubmit(data) {
     setisLoading(true)
-    callApi({method:"post",path:"Users/Reset/Request",data})
+    customFetch({method:"post",path:"Users/Reset/Request",data})
     .then(result=>{
       setisLoading(false)
       toast(result.data.message);

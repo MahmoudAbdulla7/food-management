@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import logo from '../../../assets/1.png';
-import { useForm ,Link,useNavigate,toast,callApi } from "../../../utls/index";
+import { useForm ,Link,useNavigate,toast,customFetch } from "../../../utls/index";
 import Loading from '../../../SharedModule/Components/Loading/Loading';
 
 export default function Login({saveAdminData}) {
@@ -9,7 +9,7 @@ export default function Login({saveAdminData}) {
   const [isLoading, setisLoading] = useState(false);
   function onSubmit(data) {
     setisLoading(true)
-    callApi({method:"post",path:"Users/Login",data})
+    customFetch({method:"post",path:"Users/Login",data})
     .then(result=>{
       toast("success");
       localStorage.setItem("adminTkn",result.data.token)

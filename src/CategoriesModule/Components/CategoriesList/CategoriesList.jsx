@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../../../SharedModule/Components/Header/Header";
 import NoData from "../../../SharedModule/Components/NoData/NoData";
 import noData from "../../../assets/no data.svg";
-import { useForm, toast, callApi, Modal } from "../../../utls/index";
+import { useForm, toast, customFetch, Modal, addNewItem, deleteItem, updateItem, getList } from "../../../utls/index";
 import Loading from "../../../SharedModule/Components/Loading/Loading";
 import Pagination from "../../../SharedModule/Components/Pagination/Pagination";
 import DeleteModal from "../../../SharedModule/Components/DeleteModal/DeleteModal";
@@ -19,30 +19,17 @@ export default function CategoriesList() {
   const handleShow = () => setShow(true);
 
 
-  function getCategoryList({ pageNumber = 1,name } = []) {
-    setIsLoading(true);
-    callApi({
-      path: "Category/",
-      pageNumber: pageNumber,
-      method: "get",
-      logedIn: true,
-      name
+
+
+  function getCategoryList({ pageNumber ,name } = []) {
+    getList({
+      path:"Category",
+      setList:setCategoryList,
+      setIsLoading:setIsLoading,
+      setNumberOfPages:setNumberOfPages,
+      pageNumber : pageNumber,
+      name,
     })
-      .then((result) => {
-        setNumberOfPages(
-          Array(result.data.totalNumberOfPages)
-            .fill()
-            .map((_, i) => {
-              return i + 1;
-            })
-        );
-        setCategoryList(result?.data?.data);
-        setIsLoading(false);
-      })
-      .catch((errors) => {
-        toast(errors.message || "error");
-        setIsLoading(false);
-      });
   }
 
   useEffect(() => {
@@ -60,46 +47,19 @@ export default function CategoriesList() {
 
 
   //--- add
-  function addNewCategory(data) {
-
-    setHandelLoadingOfModal(true);
-
-    callApi({ method: "post", path: "Category/", data, logedIn: true })
-      .then((result) => {
-        setHandelLoadingOfModal(false);
-        handleClose();
-        getCategoryList();
-        toast("Success");
-      })
-      .catch((error) => {
-        setHandelLoadingOfModal(false);
-        toast(error.message || "faild");
-      });
-  }
-
   function showAddModal() {
     setValue("name", null);
     setModelState("Add");
   }
 
+  function addNewCategory(data) {
+    addNewItem({apiPath:"Category/", data, getListFunction:getCategoryList,setHandelLoadingOfModal,handleClose})
+  }
+
   //--- delete
   function deleteCategory(e) {
-
     e.preventDefault();
-    setHandelLoadingOfModal(true);
-
-    callApi({ method: "delete", path: `Category/${itemId}`, logedIn: true })
-      .then((result) => {
-        handleClose();
-        getCategoryList();
-        setHandelLoadingOfModal(false);
-        toast("Delete Successfully");
-      })
-      .catch((error) => {
-        toast("Faild");
-        setHandelLoadingOfModal(false);
-        handleClose();
-      });
+    deleteItem({itemType:"Category", itemId, getListFunction:getCategoryList,setHandelLoadingOfModal,handleClose});
   }
 
   function showDeleteModal(id) {
@@ -116,17 +76,7 @@ export default function CategoriesList() {
 
   function updateCategory(data) {
     setHandelLoadingOfModal(true);
-    callApi({ method: "put", path: `Category/${itemId}`, data, logedIn: true })
-      .then((result) => {
-        handleClose();
-        setHandelLoadingOfModal(false);
-        getCategoryList();
-        toast("Success");
-      })
-      .catch((error) => {
-        setHandelLoadingOfModal(false);
-        toast(error.message || "faild");
-      });
+    updateItem({itemType:"Category", itemId:itemId, data, getListFunction:getCategoryList,setHandelLoadingOfModal,handleClose});
   }
 
   const handleClose = () => setModelState("close");

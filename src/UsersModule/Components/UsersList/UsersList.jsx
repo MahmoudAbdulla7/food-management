@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../../../SharedModule/Components/Header/Header";
-import { useForm, toast, callApi, Modal } from "../../../utls/index";
+import { useForm, toast, customFetch, Modal, deleteItem, getList } from "../../../utls/index";
 import { useEffect, useState } from "react";
 import noData from "../../../assets/no data.svg";
 import NoData from "../../../SharedModule/Components/NoData/NoData";
@@ -25,31 +25,14 @@ export default function UsersList() {
 
   // get Data from Api
   function getUsersList({ pageNumber = 1, userName, groups } = []) {
-    setIsLoading(true);
-
-    callApi({
-      path: "Users/",
-      pageNumber: pageNumber,
-      method: "get",
-      logedIn: true,
+    getList({
+      path:"Users",
+      setList:setUsersList,
+      setIsLoading:setIsLoading,
+      setNumberOfPages:setNumberOfPages,
+      pageNumber : pageNumber,
       userName,
-      groups,
     })
-      .then((result) => {
-        setNumberOfPages(
-          Array(result.data.totalNumberOfPages)
-            .fill()
-            .map((_, i) => {
-              return i + 1;
-            })
-        );
-        setUsersList(result?.data?.data);
-        setIsLoading(false);
-      })
-      .catch((errors) => {
-        toast(errors.response.data.message || "error");
-        setIsLoading(false);
-      });
   };
 
 
@@ -64,24 +47,12 @@ export default function UsersList() {
   }
 
   // --- Dalete User
-
+  
+  
   function deleteUser(e) {
-
+    
     e.preventDefault();
-    setHandelLoadingOfModal(true);
-
-    callApi({ method: "delete", path: `Users/${itemId}`, logedIn: true })
-      .then((result) => {
-        handleClose();
-        setHandelLoadingOfModal(false);
-        getUsersList();
-        toast(result.data.message || "Deleted Successfully");
-      })
-      .catch((error) => {
-        setHandelLoadingOfModal(false);
-        toast(error.response.data.message || "Faild");
-        handleClose();
-      });
+    deleteItem({itemType:"Users", itemId, getListFunction:getUsersList,setHandelLoadingOfModal,handleClose});
   }
   
   function showDeleteModal(id) {

@@ -1,7 +1,7 @@
 import React, { useRef,useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import logo from '../../../assets/1.png';
-import { useForm,toast,callApi,useNavigate } from "../../../utls/index";
+import { useForm,toast,customFetch,useNavigate } from "../../../utls/index";
 import Loading from '../../../SharedModule/Components/Loading/Loading';
 export default function ResetPassword({saveAdminData}) {
   const navigate =useNavigate();
@@ -13,7 +13,7 @@ export default function ResetPassword({saveAdminData}) {
 
   function onSubmit(data) {
     setisLoading(true)
-    callApi({method:"post",path:"Users/Reset",data})
+    customFetch({method:"post",path:"Users/Reset",data})
     .then(result=>{
       toast("success");
       setisLoading(false)
