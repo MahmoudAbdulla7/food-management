@@ -3,17 +3,19 @@ import logo from '../../../assets/1.png';
 import { useForm ,Link,useNavigate,toast,customFetch } from "../../../utls/index";
 import Loading from '../../../SharedModule/Components/Loading/Loading';
 
-export default function Login({saveAdminData}) {
+export default function Login({saveUserData}) {
   const navigate =useNavigate();
+
   let {register,handleSubmit,formState:{errors}} =useForm();
   const [isLoading, setisLoading] = useState(false);
+
   function onSubmit(data) {
     setisLoading(true)
     customFetch({method:"post",path:"Users/Login",data})
     .then(result=>{
       toast("success");
-      localStorage.setItem("adminTkn",result.data.token)
-      saveAdminData();
+      localStorage.setItem("userTkn",result.data.token)
+      saveUserData();
       setisLoading(false)
       navigate("/dashboard");
     })
@@ -21,6 +23,7 @@ export default function Login({saveAdminData}) {
       setisLoading(false)
       return toast(error?.response.data.message|| "Failed")})
   }
+  
   return (
     <div className='Auth-container container-fluid'>
       <div className="row bg-overLay vh-100 justify-content-center">
@@ -49,7 +52,10 @@ export default function Login({saveAdminData}) {
               </div>
               <br />
               <button className='btn btn-success w-100'>{isLoading?<Loading/>: <span>Login</span>} </button>
+              <div className="text-end">
+              <Link className="text-decoration-none text-success ms-2" to="/register"> Register Now !</Link>
 
+              </div>
             </form>
           </div>
         </div>

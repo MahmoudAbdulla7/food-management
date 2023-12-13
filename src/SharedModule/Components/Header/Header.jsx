@@ -2,31 +2,24 @@ import React from 'react'
 import eating from '../../../assets/eating a variety of foods-amico.png'
 import { useLocation } from 'react-router-dom'
 
-export default function Header({adminData}) {
+export default function Header({userData}) {
   let path=useLocation().pathname?.split("/")[2]
   if (path==null) {
     path="home"
   }
   const headers ={
     home:{
-      h2:`Welcome ${adminData?.userName}`,
+      h2:`Welcome ${userData?.userName}`,
       p:"This is a welcoming screen for the entry of the application , you can now see the options"
     },
-    recipes:{
-      h2:"Recipes Items",
-      p:"You can now add your items that any user can order it from the Application and you can edit"
-    },
-    users:{
-      h2:"Users List",
-      p:"You can now add your items that any user can order it from the Application and you can edit"
-    },
-    categories:{
-      h2:'Categories Items',
+    
+    favorites:{
+      h2:'Favorite Items',
       p:"You can now add your items that any user can order it from the Application and you can edit"
     }
   }
   return (
-    <div className="container-fluid rounded-5 header-content">
+    <div className="container-fluid rounded-5 header-content p-4 my-2">
           <div className=' px-2 text-light'>
       <div className="row align-items-center ">
         <div className="col-md-10">

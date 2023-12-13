@@ -2,7 +2,7 @@ body{
     overflow-x: hidden;
 }
 .ps-sidebar-root{
-    background-color: #f8f9fa !important;
+    border-top-right-radius:50px !important;
 }
 
 .Auth-container{
@@ -25,6 +25,13 @@ body{
     background-color: #1F263E !important;
     color: white;
     border-top-right-radius: 50px !important;
+}
+
+.handelFavImage{
+    height: 250px !important;
+}
+.favLoading{
+    height: 400px;
 }
 
 .ps-menu-button:hover {

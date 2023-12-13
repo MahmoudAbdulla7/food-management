@@ -1,55 +1,46 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import MasterLayout from './SharedModule/Components/MasterLayout/MasterLayout'
-import Home from './HomeModule/Components/Home/Home'
-import NotFound from './SharedModule/Components/NotFound/NotFound'
-import UsersList from './UsersModule/Components/UsersList/UsersList'
-import RecipesList from './RecipesModule/Components/Recipes/RecipesList'
-import CategoriesList from './CategoriesModule/Components/CategoriesList/CategoriesList'
-import Login from './AuthModule/Components/Login/Login'
-import ForgetPassword from './AuthModule/Components/ForgetPassword/ForgetPassword'
-import AuthLayout from './SharedModule/Components/AuthLayout/AuthLayout'
 import { jwtDecode } from 'jwt-decode'
-import ProtectedRoute from './SharedModule/Components/ProtectedRoute/ProtectedRoute'
-import ResetPassword from './AuthModule/Components/ResetPassword/ResetPassword'
+import { useContext, useEffect, useState } from 'react'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
+import './App.css'
+import ForgetPassword from './AuthModule/Components/ForgetPassword/ForgetPassword'
+import Login from './AuthModule/Components/Login/Login'
+import ResetPassword from './AuthModule/Components/ResetPassword/ResetPassword'
+import Home from './HomeModule/Components/Home/Home'
+import Favorites from './RecipesModule/Components/Recipes/Favorites'
+import RecipesList from './RecipesModule/Components/Recipes/RecipesList'
+import AuthLayout from './SharedModule/Components/AuthLayout/AuthLayout'
+import MasterLayout from './SharedModule/Components/MasterLayout/MasterLayout'
+import NotFound from './SharedModule/Components/NotFound/NotFound'
+import ProtectedRoute from './SharedModule/Components/ProtectedRoute/ProtectedRoute'
+import { AuthContext } from './Context/authContext'
+import Register from './AuthModule/Components/Register/Register'
+import VerficationCode from './AuthModule/Components/VerficationCode/VerficationCode'
 
 
 function App() {
-  let [adminData, setAdminData] = useState(null);
 
-  function saveAdminData() {
-    let encodedData =localStorage.getItem("adminTkn");
-    let decodedTkn =jwtDecode(encodedData);
-    setAdminData(decodedTkn)
-  }
-  
-  useEffect(()=>{
-    if (localStorage.getItem("adminTkn")) {
-      saveAdminData()
-    }
-  },[])
+  let {userData,saveUserData}=useContext(AuthContext);
+
 
   let router =createBrowserRouter([
     {
-      path:'dashboard',element:(<ProtectedRoute adminData={adminData}><MasterLayout adminData={adminData}/></ProtectedRoute>),errorElement:<NotFound/>,children:[
-        {index:true,element:<Home adminData={adminData}/>},
-        {path:'users',element:<UsersList/>},
+      path:'dashboard',element:(<ProtectedRoute userData={userData}><MasterLayout userData={userData}/></ProtectedRoute>),errorElement:<NotFound/>,children:[
+        {index:true,element:<Home userData={userData}/>},
+        {path:'favorites',element:<Favorites/>},
         {path:'recipes',element:<RecipesList/>},
-        {path:'categories',element:<CategoriesList/>}
       ]
   
     },
     {
       
       path:'/',element:(<AuthLayout/>),errorElement:<NotFound/>,children:[
-        {index:true,element:<Login saveAdminData={saveAdminData}/>},
-        {path:'login',element:<Login saveAdminData={saveAdminData}/>},
+        {index:true,element:<Login saveUserData={saveUserData}/>},
+        {path:'login',element:<Login saveUserData={saveUserData}/>},
+        {path:'register',element:<Register saveUserData={saveUserData}/>},
         {path:'forget-password',element:<ForgetPassword/>},
         {path:'reset-password',element:<ResetPassword/>},
+        {path:'verify',element:<VerficationCode/>},
       ]
     }
   ])

@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const url = `https://upskilling-egypt.com:443/api/v1/`;
-let Authorization =`Bearer ${localStorage.getItem("adminTkn")}`
+let Authorization =`Bearer ${localStorage.getItem("userTkn")}`
 
 export function customFetch({
   path,
@@ -43,81 +43,11 @@ export function customFetch({
   return axios[method](`${full_url}`, data);
 }
 
-export function addNewItem({
-  apiPath,
-  data,
-  getListFunction,
-  setHandelLoadingOfModal,
-  handleClose,
-}) {
-  setHandelLoadingOfModal(true);
-  customFetch({ method: "post", path: apiPath, data, logedIn: true })
-    .then((result) => {
-      setHandelLoadingOfModal(false);
-      handleClose();
-      getListFunction();
-      toast(result.data.message || "Created Successfully");
-    })
-    .catch((error) => {
-      setHandelLoadingOfModal(false);
-      toast(error?.data?.message || "Failed");
-      handleClose();
-    });
-}
-export function deleteItem({
-  itemType,
-  itemId,
-  getListFunction,
-  setHandelLoadingOfModal,
-  handleClose,
-}) {
-  setHandelLoadingOfModal(true);
-  axios.delete(`${url}${itemType}/${itemId}`, {
-    headers: {
-      Authorization: Authorization,
-    },
-  })
-
-  .then((result) => {
-    handleClose();
-    getListFunction();
-    setHandelLoadingOfModal(false);
-    toast("Delete Successfully");
-  })
-  .catch((error) => {
-    toast(error?.response?.data?.message || "Failed");
-    setHandelLoadingOfModal(false);
-    handleClose();
-  });
-}
-export function updateItem({
-  itemType,
-  itemId,
-  data,
-  getListFunction,
-  setHandelLoadingOfModal,
-  handleClose,
-}) {
-  setHandelLoadingOfModal(true);
-
-  customFetch({ method: "put", path: `${itemType}/${itemId}`, data, logedIn: true })
-    .then((result) => {
-      handleClose();
-      setHandelLoadingOfModal(false);
-      getListFunction();
-      toast(result?.data?.message || "Updated Successfully");
-    })
-    .catch((error) => {
-      setHandelLoadingOfModal(false);
-      toast(error?.data?.message || "Failed");
-      handleClose();
-    });
-}
 export function getList({
   path,
   setIsLoading,
   setNumberOfPages,
-  pageSize,
+  pageSize=6,
   pageNumber,
   name,
   tagId,

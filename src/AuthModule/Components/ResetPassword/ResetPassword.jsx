@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import logo from '../../../assets/1.png';
 import { useForm,toast,customFetch,useNavigate } from "../../../utls/index";
 import Loading from '../../../SharedModule/Components/Loading/Loading';
-export default function ResetPassword({saveAdminData}) {
+export default function ResetPassword({saveUserData}) {
   const navigate =useNavigate();
   const [isLoading, setisLoading] = useState(false);
 

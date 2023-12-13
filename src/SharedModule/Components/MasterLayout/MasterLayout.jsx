@@ -1,16 +1,16 @@
 import React from 'react'
-import Sidebar from '../Sidebar/Sidebar'
 import { Outlet } from 'react-router-dom'
 import Navbar from '../Navbar/Navbar'
-export default function MasterLayout({adminData}) {
+import Sidebar from '../Sidebar/Sidebar'
+export default function MasterLayout({userData}) {
   return (
     <>
 
         <div className="d-flex w-100">
                 <Sidebar/>
-            <div className="w-100 ">
+            <div className="w-100 p-4">
                 <div>
-                    <Navbar adminData={adminData}/>
+                    <Navbar userData={userData}/>
                     <Outlet/>
                     
                 </div>
