@@ -68,7 +68,7 @@ export default function Register() {
             {errors.phoneNumber &&<span className='text-danger ps-1'>{errors.phoneNumber.message}</span>}
             {errors.phoneNumber?.type=="pattern" &&<span className='text-danger ps-1'>invalid phone number</span>}
             </div>
-            {/*  */}
+            
             <div className="col-md-6 form-group password my-2">
             <input  placeholder='password' className="form-control" type='password' {...register("password",{required:"password is required"})}/>
             {errors.password&&<span className='text-danger ps-1'>{errors.password.message}</span>}
